@@ -1,0 +1,34 @@
+name: Build WordPress Theme ZIP
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up zip folder
+        run: |
+          mkdir -p release/sfantul-nicolae-theme
+          cp -r ./* release/sfantul-nicolae-theme/ || true
+          rm -rf release/sfantul-nicolae-theme/.git
+          rm -rf release/sfantul-nicolae-theme/.github
+          rm -rf release/sfantul-nicolae-theme/release
+
+      - name: Create ZIP
+        run: |
+          cd release
+          zip -r sfantul-nicolae-theme.zip sfantul-nicolae-theme
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sfantul-nicolae-theme
+          path: release/sfantul-nicolae-theme.zip
